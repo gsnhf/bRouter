@@ -1,5 +1,5 @@
 # Running profile for BRouter
-# Pace als Dezimalwert in min/km:
+# Pace as a decimal value in min/km:
 # 5.0 = 5:00 min/km
 # 5.5 = 5:30 min/km
 # 4.75 = 4:45 min/km
@@ -16,7 +16,7 @@ assign turnInstructionCatchingRange 20
 assign showtime 1
 assign showSpeedProfile 1
 
-assign running_pace = 5   # %running_pace% | Zielpace in min/km | number
+assign running_pace = 5   # %running_pace% | Target pace in min/km | number
 assign maxSpeed divide 71.5 running_pace
 
 assign allow_steps 1

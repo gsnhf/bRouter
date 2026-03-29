@@ -1,55 +1,55 @@
 # BRouter Running Profile
 
-Dieses Repository enthält ein BRouter-Fußprofil für Laufstrecken.
+This repository contains a BRouter foot profile for running routes.
 
-## Dateien
+## Files
 
-- `running.brf`: Laufprofil für BRouter und bikerouter.de.
+- `running.brf`: Running profile for BRouter and bikerouter.de.
 
-## Ziel des Profils
+## Goal of the Profile
 
-Das Profil soll:
+The profile is intended to:
 
-- laufbare Wege bevorzugen,
-- Hauptstraßen möglichst vermeiden,
-- moderate Oberflächen- und Höhenunterschiede berücksichtigen,
-- eine realistischere Laufzeit auf bikerouter.de anzeigen.
+- prefer runnable paths,
+- avoid main roads as much as possible,
+- account for moderate surface and elevation differences,
+- display a more realistic running time on bikerouter.de.
 
-## Wichtiger Parameter
+## Important Parameter
 
-Die angezeigte Zeit wird in BRouter bei Fußprofilen im Wesentlichen über `maxSpeed` bestimmt.
-Im Profil wird `maxSpeed` daher aus der gewünschten Pace abgeleitet:
+For foot profiles in BRouter, the displayed time is determined mainly by `maxSpeed`.
+In this profile, `maxSpeed` is therefore derived from the desired pace:
 
 ```brf
 assign running_pace = 5
 assign maxSpeed divide 71.5 running_pace
 ```
 
-Beispiele:
+Examples:
 
-- `5` entspricht ungefähr `5:00 min/km`
-- `5.5` entspricht ungefähr `5:30 min/km`
-- `4.75` entspricht ungefähr `4:45 min/km`
+- `5` corresponds to approximately `5:00 min/km`
+- `5.5` corresponds to approximately `5:30 min/km`
+- `4.75` corresponds to approximately `4:45 min/km`
 
-Der Faktor `71.5` ist eine Kalibrierung für das Fußmodell von BRouter, damit die auf bikerouter.de angezeigte Zeit näher an der realen Laufzeit liegt.
+The factor `71.5` is a calibration value for BRouter's foot model so that the time shown on bikerouter.de is closer to actual running time.
 
-## Weitere Schalter
+## Additional Switches
 
-- `allow_steps`: Treppen erlauben oder vermeiden
-- `allow_ferries`: Fähren erlauben oder vermeiden
-- `wet_mode`: unbefestigte Wege bei Nässe stärker bestrafen
-- `consider_elevation`: Höhenmeter in der Routenwahl berücksichtigen
+- `allow_steps`: allow or avoid steps
+- `allow_ferries`: allow or avoid ferries
+- `wet_mode`: penalize unpaved paths more strongly in wet conditions
+- `consider_elevation`: include elevation gain in route selection
 
-## Nutzung auf bikerouter.de
+## Usage on bikerouter.de
 
-1. [running.brf](running.brf) im Profil-Editor öffnen oder hochladen.
-2. `running_pace` auf die gewünschte Zielpace setzen.
-3. Route neu berechnen.
+1. Open or upload [running.brf](running.brf) in the profile editor.
+2. Set `running_pace` to the desired target pace.
+3. Recalculate the route.
 
-Wenn sich die angezeigte Zeit nicht ändert, liegt es meist daran, dass das Profil im Browser noch nicht neu geladen wurde. In dem Fall das Profil erneut einfügen und die Route vollständig neu berechnen.
+If the displayed time does not change, the profile usually has not been reloaded in the browser yet. In that case, paste the profile again and fully recalculate the route.
 
-## Hinweise zur Kalibrierung
+## Calibration Notes
 
-- Wenn die ETA zu hoch ist, `running_pace` kleiner setzen, zum Beispiel von `5.0` auf `4.9`.
-- Wenn die ETA zu niedrig ist, `running_pace` größer setzen.
-- Änderungen an `road_penalty`, `surface_penalty` und den Höhenkosten beeinflussen primär die Routenwahl, nicht direkt die angezeigte Zeit.
+- If the ETA is too high, set `running_pace` lower, for example from `5.0` to `4.9`.
+- If the ETA is too low, set `running_pace` higher.
+- Changes to `road_penalty`, `surface_penalty`, and the elevation costs primarily affect route selection, not the displayed time directly.
