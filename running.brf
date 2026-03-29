@@ -16,11 +16,11 @@ assign turnInstructionCatchingRange 20
 assign showtime 1
 assign showSpeedProfile 1
 
-assign running_pace_min_per_km = 5.0   # %running_pace_min_per_km% | Zielpace in min/km | number | 3.0..8.5
-assign maxSpeed divide 71.5 running_pace_min_per_km
+assign running_pace = 5   # %running_pace% | Zielpace in min/km | number
+assign maxSpeed divide 71.5 running_pace
 
 assign allow_steps 1
-assign allow_ferries 0
+assign allow_ferries false
 assign wet_mode 0
 
 assign elevationpenaltybuffer 5
