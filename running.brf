@@ -1,0 +1,183 @@
+# Running profile for BRouter
+# Pace als Dezimalwert in min/km:
+# 5.0 = 5:00 min/km
+# 5.5 = 5:30 min/km
+# 4.75 = 4:45 min/km
+
+---context:global
+
+assign validForFoot 1
+assign processUnusedTags 0
+assign consider_elevation 1
+assign shortest_way 0
+
+assign turnInstructionMode 1
+assign turnInstructionCatchingRange 20
+assign showtime 1
+assign showSpeedProfile 1
+
+assign running_pace_min_per_km = 5.0   # %running_pace_min_per_km% | Zielpace in min/km | number | 3.0..8.5
+assign maxSpeed divide 71.5 running_pace_min_per_km
+
+assign allow_steps 1
+assign allow_ferries 0
+assign wet_mode 0
+
+assign elevationpenaltybuffer 5
+assign elevationmaxbuffer 10
+assign elevationbufferreduce 0.6
+
+assign uphillcost 2.5
+assign uphillcutoff 2.0
+assign downhillcost 1.0
+assign downhillcutoff 2.0
+
+---context:way
+
+assign ispaved
+  if surface=paved|asphalt|concrete|paving_stones|sett|cobblestone then true
+  else if tracktype=grade1 then true
+  else false
+
+assign issidewalk
+  if sidewalk=left|right|both|yes then true
+  else false
+
+assign ismainroad
+  if highway=tertiary|tertiary_link|secondary|secondary_link|primary|primary_link|trunk|trunk_link|motorway|motorway_link then true
+  else false
+
+assign istrack
+  if highway=track|path|footway then true
+  else false
+
+assign defaultaccess
+  switch access=
+    not motorroad=yes
+    switch or access=private access=no
+      0
+      1
+
+assign footaccess
+  or issidewalk
+     switch foot=
+       defaultaccess
+       not foot=private|no
+
+assign surface_penalty
+  if ispaved then 0.0
+  else if surface=compacted|fine_gravel then 0.02
+  else if surface=gravel then 0.05
+  else if surface=ground|dirt|earth then 0.04
+  else if surface=grass then 0.08
+  else if surface=pebblestone then 0.12
+  else if surface=sand then 0.40
+  else if surface=mud then 1.20
+  else 0.05
+
+assign wet_penalty
+  if not wet_mode then 0.0
+  else if ispaved then 0.0
+  else if surface=mud then 2.0
+  else if surface=ground|dirt|earth|grass then 0.5
+  else if surface=gravel|fine_gravel|pebblestone then 0.2
+  else 0.1
+
+assign road_penalty
+  if route=ferry then ( switch allow_ferries 2.34 100000 )
+  else if highway=steps then ( switch allow_steps 1.40 100000 )
+  else if highway=path|footway then 1.00
+  else if highway=track then 1.01
+  else if highway=pedestrian then 1.01
+  else if highway=cycleway then 1.02
+  else if highway=residential|living_street then 1.03
+  else if highway=service then 1.04
+  else if highway=road|unclassified then 1.05
+  else if highway=bridleway then 1.08
+  else if highway=tertiary|tertiary_link then 1.15
+  else if highway=secondary|secondary_link then 1.60
+  else if highway=primary|primary_link then 3.50
+  else if highway=trunk|trunk_link|motorway|motorway_link then 100000
+  else if highway=construction|proposed|abandoned then 100000
+  else 1.10
+
+assign sidewalk_bonus
+  if and issidewalk ismainroad then -0.10
+  else 0.0
+
+assign rawcostfactor
+  if not footaccess then 100000
+  else add road_penalty add surface_penalty add wet_penalty sidewalk_bonus
+
+assign costfactor
+  max 1.0 rawcostfactor
+
+assign uphillcostfactor
+  max 1.0
+    add costfactor
+      if ispaved then -0.02 else 0.05
+
+assign downhillcostfactor
+  max 1.0
+    add costfactor
+      if ispaved then 0.03 else 0.00
+
+assign turncost 0
+assign initialcost switch route=ferry 5000 0
+assign initialclassifier costfactor
+assign nodeaccessgranted 0
+
+assign priorityclassifier
+  if highway=motorway then 30
+  else if highway=motorway_link then 29
+  else if highway=trunk then 28
+  else if highway=trunk_link then 27
+  else if highway=primary then 26
+  else if highway=primary_link then 25
+  else if highway=secondary then 24
+  else if highway=secondary_link then 23
+  else if highway=tertiary then 22
+  else if highway=tertiary_link then 21
+  else if highway=unclassified then 20
+  else if highway=residential|living_street then 18
+  else if highway=steps|pedestrian then 16
+  else if highway=service|cycleway then ( if ispaved then 14 else 12 )
+  else if highway=track|road|bridleway then ( if ispaved then 10 else 8 )
+  else if highway=path|footway then ( if ispaved then 6 else 3 )
+  else 0
+
+assign isbadoneway 0
+assign isgoodoneway 0
+assign isroundabout junction=roundabout
+assign islinktype highway=motorway_link|trunk_link|primary_link|secondary_link|tertiary_link
+
+assign isgoodforcars
+  if greater priorityclassifier 19 then true
+  else if highway=residential|living_street|service then true
+  else false
+
+assign classifiermask
+  add isbadoneway
+    add multiply isgoodoneway 2
+      add multiply isroundabout 4
+        add multiply islinktype 8
+          multiply isgoodforcars 16
+
+---context:node
+
+assign defaultaccess
+  switch access=
+    1
+    switch or access=private access=no
+      0
+      1
+
+assign footaccess
+  switch foot=
+    defaultaccess
+    switch or foot=private foot=no
+      0
+      1
+
+assign initialcost
+  switch footaccess 0 1000000
