@@ -46,6 +46,10 @@ The factor `71.5` is a calibration value for BRouter's foot model so that the ti
 2. Set `running_pace` to the desired target pace.
 3. Recalculate the route.
 
+Straight line segments (`straight=` in the URL, or the straight-line toggle in BRouter-Web/bikerouter.de) are not controlled by the profile alone. They are requested by the web client or request URL.
+
+This profile now enables `add_beeline`, which helps BRouter output a beeline connection when a start or via point is matched to a more distant road during dynamic range search. That improves off-road cases, but it is not a replacement for explicit straight-line segments.
+
 If the displayed time does not change, the profile usually has not been reloaded in the browser yet. In that case, paste the profile again and fully recalculate the route.
 
 ## Calibration Notes

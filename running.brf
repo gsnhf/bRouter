@@ -10,6 +10,7 @@ assign validForFoot 1
 assign processUnusedTags 0
 assign consider_elevation 1
 assign shortest_way 0
+assign add_beeline 1
 
 assign turnInstructionMode 1
 assign turnInstructionCatchingRange 20
